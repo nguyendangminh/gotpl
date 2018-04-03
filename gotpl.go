@@ -28,6 +28,9 @@ func New(path string) (*Helper, error) {
 
 	temps := make(map[string]*template.Template)
 
+	if len(tpls) == 0 || len(shares) == 0 {
+		return nil, fmt.Errorf("tempate files not found")
+	}
 	for _, tpl := range tpls {
 		files := append(shares, tpl)
 		temps[filepath.Base(tpl)] = template.Must(template.ParseFiles(files...))
@@ -39,7 +42,7 @@ func New(path string) (*Helper, error) {
 
 // name: name of the template, for example: "index" (without extension ".tpl")
 func (helper *Helper) Render(w http.ResponseWriter, name string, data map[string]interface{}) error {
-	tpl, ok := helper.templates[name + ".tpl"]
+	tpl, ok := helper.templates[name+".tpl"]
 	if !ok {
 		return fmt.Errorf("The template %s does not exist.", name)
 	}
